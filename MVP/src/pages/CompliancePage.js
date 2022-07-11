@@ -4,7 +4,6 @@
 // import relevant dependencies
 import React from "react";
 
-
 //JSX Component
 const CompliancePage = () => {
    return (
