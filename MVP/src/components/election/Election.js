@@ -19,7 +19,7 @@ const ElectionPage = () => {
     return eachElection.name.toLowerCase().includes(searchField.toLowerCase());
   }) 
   useEffect(() => {
-    axios.get('https://v2-testnet.herokuapp.com/elections').then(response => {
+    axios.get('').then(response => {
        setElections(response.data.data)
        dispatch({
          type : "getAllElection",
@@ -33,7 +33,7 @@ const ElectionPage = () => {
          <div className="election__content">
           <SearchBar searchChange={onSearchChange} />
           {
-         !elections.length <0 ? (
+         !elections.length <0 && (
           <div
           style={{
             width: "100%",
@@ -48,14 +48,17 @@ const ElectionPage = () => {
             textTransform: "uppercase",
           }}
         >
-          <p style={{ opacity: 0.8, margin: "30px 0px 20px" }}>Getting Ongoing election...</p>
+          <p style={{ opacity: 0.8, margin: "30px 0px 20px" }}>Getting ongoing election...</p>
           <BarLoader
             color="#888"
             size={150}
             speedMultiplier="0.5"
           />
         </div>
-         ) : (
+         ) 
+        }
+         { elections.length > 0 &&
+         (
            <div className="election__cards">
              {
                filteredElectionList.map((election, index) => {
@@ -69,14 +72,14 @@ const ElectionPage = () => {
 
           }
         {
-            elections.length===0 ? (
+            elections.length===0 && (
               <p style={{
                 margin: "18px",
                 fontWeight: "bold",
                 borderLeft: "solid 3px rgb(57, 129, 198)",
                 paddingLeft: "10px",
-              }}>There is currently no live election </p>
-            ) : null
+              }}>There is currently no live election.</p>
+            ) 
           }
          </div>
       </div>

@@ -479,6 +479,7 @@ const ElectionList = () => {
                   </div>
                 </div>
                 <div className="card_cand">
+                { each_election_data[0].has_ended === false &&
                   <div className="card_cand_hd">
                     <div className="amountToCommit">
                       <p>Amount to commit:</p>
@@ -499,27 +500,34 @@ const ElectionList = () => {
                       }
                     </div>
                   </div>
+              }
                   <div className="vote_collap">
                     <div className="card_cand_hd">Options</div>
                  <ul className="vote_now_list">
                           <li>
+                         { each_election_data[0].has_ended === false && 
                             <input
                               type="radio"
                               name="options"
                               value={each_election_data[0].candidates[0].address}
                             />
+                         }
                             <p>{each_election_data[0].option1}</p>
                           </li>
                      <li>
+                       { each_election_data[0].has_ended === false && 
                         <input
                           type="radio"
                           name="options"
                           value={each_election_data[0].candidates[1].address}
                         />
+                       }
                         <p>{each_election_data[0].option2}</p>
                       </li>
                     </ul>
-                    <div className="rec_vote_cont">
+                    {
+                  each_election_data[0].has_ended === false && 
+                      <div className="rec_vote_cont">
                       <button
                         className="record_vote button"
                         onClick={(e) => {
@@ -543,6 +551,8 @@ const ElectionList = () => {
                         Submit Vote <i className="uil uil-mailbox"></i>
                       </button>
                     </div>
+                    }
+                  
                   </div>
                 </div>
               </div>

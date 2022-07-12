@@ -11,7 +11,6 @@ import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
 import QRCodeModal from "algorand-walletconnect-qrcode-modal";
 import WalletConnect from "@walletconnect/client"; 
 
-
 //JSX Component Propose
 const Propose = () => {
 
@@ -48,22 +47,12 @@ const Propose = () => {
     second : "secondcandidate"
   }]
 
-// Crafting Transactioon
+  // Crafting Transactioon
   const craftTransactions =async(candidates) => {
     const txns = [];
   
     const suggestedParams = await algodClient.getTransactionParams().do();
 
-    // top up payment
-    for (let candidate of candidates) {
-      const txn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-        from: isThereAddress,
-        to: candidate.address,
-        amount: 100000,
-        suggestedParams,
-      });
-      txns.push(txn);
-    }
     // rewards 
     const txn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
       from: isThereAddress,
@@ -97,8 +86,6 @@ const Propose = () => {
       });
 
       if (walletType === "algosigner") {
-        
-
         const signedTxns = await window.AlgoSigner.signTxn(
           txns.map((txn) => ({
             txn: window.AlgoSigner.encoding.msgpackToBase64(txn.toByte()),
@@ -125,7 +112,6 @@ const Propose = () => {
 
       // eslint-disable-next-line
       txns.map((transaction) => {
-
         Txns.push({
           txn: Buffer.from(algosdk.encodeUnsignedTransaction(transaction)).toString(
             "base64"
@@ -134,12 +120,10 @@ const Propose = () => {
         })
       })
 
-
       const requestParams = [Txns];
-
       const request = formatJsonRpcRequest("algo_signTxn", requestParams);
       const result = await connector.sendCustomRequest(request);
-   // eslint-disable-next-line
+      // eslint-disable-next-line
       const decodedResult = result.map((element) => {
         return element ? new Uint8Array(Buffer.from(element, "base64")) : null;
       });
@@ -149,33 +133,30 @@ const Propose = () => {
       console.log(error);
       continueExecution = false;
     }
-
     return continueExecution;
-
   }
 
+    // This function creates a Candidate Credential which creates a new address for each option without mmemonics and update on approval.
     const createCandidates = () => {
     const candidateCred=[]
     // eslint-disable-next-line
       for (let candidate of candidates) {
-        const { sk: private_key, addr: address } = algosdk.generateAccount();
+        const { addr: address } = algosdk.generateAccount();
        candidateCred.push({
-          private_key: algosdk.secretKeyToMnemonic(private_key),
+          private_key: "update address after approval",
           address,
         });
       }
 
      return candidateCred
-
     }
 
     // Proposal checks
     const createProposal = () => {
-
       if(!isThereAddress) {
         dispatch({
           type: "alert_modal",
-          alertContent: "Kindly Connect Wallet to propose an election.",
+          alertContent: "Kindly Connect Wallet to propose an issue.",
         });
         return;
     } else if(!(document.getElementById('governance_name').value)) {
@@ -227,7 +208,7 @@ const Propose = () => {
             // add choice per vote input
             axios
               .post(
-                `https://v2-testnet.herokuapp.com/elections/create`,
+                ``,
                 {
                   candidates: candidatesForElection,
                   name: document.getElementById("governance_name").value,
@@ -241,30 +222,24 @@ const Propose = () => {
               .then((response) => {
                 dispatch({
                   type: "alert_modal",
-                  alertContent: `${response.data.message}, Which will be reviewed and pending till approval for voting`,
+                  alertContent: `${response.data.message}, Thank you! Your proposal will be reviewed.`,
                 });
               });
           }
         });
-      
-
     }
 
-// Building block
+    // Building block
     return (
        <div className="propose">
            <div className="create_elt">
       <div className="create_elt_inn">
         <div className="crt_hd">
-          <p className="converter-header"> Create Proposal & Schedule Election</p>
+          <p className="converter-header"> Create Proposal </p>
         </div>
-
-
         <div className="vote_sect">
           <div className="vote_sect_img">
-
           </div>
-
           <div className="v_inp_cov inpCont_cand">
             <p className="inp_tit">Issue</p>
             <input id="governance_name"
@@ -303,7 +278,6 @@ const Propose = () => {
               First choice.
             </p>
           </div>
-      
           <div className="v_inp_cov inpCont_cand">
             <p className="inp_tit">Option 2</p>
             <input
@@ -314,9 +288,7 @@ const Propose = () => {
              Second choice.
             </p>
           </div>
-
             <br />
-
           <div className="crt_butt">
             <button onClick={createProposal}>Create Proposal</button>
             <p className="safety">
@@ -327,12 +299,10 @@ const Propose = () => {
                 value={minimumChoice}
                 onClick={() => setMinimumChoice(500000)}
               />
-            By checking this box you are agreeing to sending a non-refundable amount of 500,000 $Choice token as a service for running this vote & Also agree to <a href="https://github.com/ChoiceCoin/v2/blob/main/ProposalPolicy/ChoiceCoinv2Policy.pdf" style={{fontSize: "11px", cursor: "pointer", marginLeft:"-5px", color:"blue"}}>Choice Coin's Terms and Conditions</a>.
+            By checking this box you agree to send a non-refundable amount of 500,000 Choice as a service fee for processing this proposal and running this vote. Additionally, you agree to <a href="https://github.com/ChoiceCoin/v2/blob/main/ProposalPolicy/ChoiceCoinv2Policy.pdf" style={{fontSize: "11px", cursor: "pointer", marginLeft:"-5px", color:"blue"}}>Choice Coin's Terms and Conditions.</a>.
             </p>
           </div>
-
         </div>
-
       </div>
     </div>
        </div>
